@@ -7,12 +7,12 @@ import Sidebar from '../../components/hotelOwner/Sidebar';
 
 const Layout = () => {
   return (
-    <div className='flex flex-col h-screen'>
+    <div className='flex flex-col h-screen bg-gray-50'>
       <Navbar />
-      <div className="">
+      <div className='flex flex-1 overflow-hidden'>
         <Sidebar />
-        <div>
-            <Outlet />
+        <div className='flex-1 overflow-auto'>
+          <Outlet />
         </div>
       </div>
     </div>

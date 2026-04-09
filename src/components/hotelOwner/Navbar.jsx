@@ -1,38 +1,29 @@
-import React from 'react'
-import { assets } from '../../assets/assets'
-import { UserButton, useUser } from '@clerk/clerk-react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import { assets } from '../../assets/assets';
+import { UserButton, useUser } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const { user } = useUser()
-  const navigate = useNavigate()
+  const { user } = useUser();
+  const navigate = useNavigate();
 
   return (
-    <div className='flex items-center justify-between px-6 py-4 md:px-20 border-b border-gray-200 bg-white sticky top-0 z-50'>
-      {/* Logo - Clicking it takes you back to the main site */}
+    <nav className='flex items-center justify-between px-4 sm:px-8 md:px-16  py-4 bg-white border-b border-gray-300  top-0 z-50 shadow-sm'>
+      
+      {/* Left - Logo */}
       <img 
         onClick={() => navigate('/')} 
-        className='w-32 cursor-pointer' 
+        className='h-12 w-auto cursor-pointer hover:opacity-75 transition-opacity duration-200 bg-black' 
         src={assets.logo} 
-        alt="Logo" 
+        alt="Hotel Logo" 
       />
 
-      <div className='flex items-center gap-4'>
-        {/* Owner Profile Info */}
-        <div className='hidden md:flex flex-col text-right'>
-          <p className='text-sm font-semibold text-gray-800'>
-            {user?.fullName}
-          </p>
-          <p className='text-xs text-primary font-medium'>
-            Hotel Owner
-          </p>
-        </div>
-
-        {/* Clerk User Button for Account Management */}
+      {/* Right - User Account */}
+      <div className='flex items-center gap-6'>
         <UserButton afterSignOutUrl="/" />
       </div>
-    </div>
-  )
-}
+    </nav>
+  );
+};
 
-export default Navbar
+export default Navbar;

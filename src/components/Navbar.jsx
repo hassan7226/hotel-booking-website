@@ -1,6 +1,6 @@
 import React from "react";
 import assets from "../assets/assets";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -26,23 +26,48 @@ const BookIcon = () => (
 
 const Navbar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const { openSignIn } = useClerk();
   const { user } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Check if current page has white background by default
+  const isHotelPage = location.pathname.includes("/rooms") || location.pathname.includes("/rooms/");
+  const shouldAlwaysBeWhite = isHotelPage;
+
   return (
     <div
-      className={`navbar flex items-center justify-between p-4  px-4 sm:px-12 lg:px-24
-    xl:px-40 py-4 fixed top-0  w-full z-20  font-medium  `}
+      className={`navbar flex items-center justify-between pt-7  px-4 sm:px-12 lg:px-24
+     py-4 fixed top-0  w-full z-20  font-medium transition-all duration-300 ${
+        shouldAlwaysBeWhite || isScrolled ? "bg-white text-black shadow-lg" : "bg-transparent text-white"
+      }`}
     >
-      <img src={assets.logo} alt="Logo" className="w-32 sm:w-40" />
+      <img 
+        src={assets.logo} 
+        alt="Logo" 
+        className="w-32 sm:w-48 transition-all"
+        style={shouldAlwaysBeWhite || isScrolled ? { filter: "brightness(0)" } : {}}
+      />
 
       {/* Menu Item */}
       <div
-        className={`menu flex flex-col sm:flex-row items-center gap-5 text-white text-sm
-      sm:text-md ${!sidebarOpen ? "max-sm:w-0 overflow-hidden" : "max-sm:w-60 "}
+        className={`menu flex flex-col sm:flex-row items-center gap-7 text-sm
+      sm:text-lg ${shouldAlwaysBeWhite || isScrolled ? "text-black" : "text-white"} ${!sidebarOpen ? "max-sm:w-0 overflow-hidden" : "max-sm:w-60 "}
       max-sm:fixed top-0 bottom-0 left-0 max-sm:min-h-screen
       max-sm:h-full max-sm:flex-col max-sm:bg-white max-sm:text-black
       max-sm:pt-20 transition-all`}
@@ -107,16 +132,17 @@ const Navbar = () => {
       </div>
 
       {/* Login menu */}
-      <div className="login flex items-center gap-4 text-white">
+      <div className={`login flex items-center gap-4 ${shouldAlwaysBeWhite || isScrolled ? "text-black" : "text-white"}`}>
         <img
           src={assets.menuIcon}
           alt=""
           onClick={() => setSidebarOpen(true)}
-          className="w-6 sm:hidden "
+          className="w-6 sm:hidden transition-all"
+          style={shouldAlwaysBeWhite || isScrolled ? { filter: "brightness(0)" } : {}}
         />
 
-        <img src={assets.searchIcon} alt="" className="w-8 h-8 max-sm:hidden" />
-        <img src={assets.userIcon} alt="" className="w-8 h-8 max-sm:hidden" />
+        <img src={assets.searchIcon} alt="" className="w-8 h-8 max-sm:hidden transition-all" style={shouldAlwaysBeWhite || isScrolled ? { filter: "brightness(0)" } : {}} />
+        <img src={assets.userIcon} alt="" className="w-8 h-8 max-sm:hidden transition-all" style={shouldAlwaysBeWhite || isScrolled ? { filter: "brightness(0)" } : {}} />
         {user ? (
           <UserButton>
             <UserButton.MenuItems>

@@ -4,7 +4,7 @@ import { assets } from '../../assets/assets';
 
 const Sidebar = () => {
   return (
-    <div className='w-64 min-h-screen bg-white border-r border-gray-200'>
+    <div className='hidden sm:block w-64  min-h-screen bg-white border-r border-gray-200'>
       <div className='flex flex-col pt-6 pl-6 gap-2'>
         
         <NavLink 

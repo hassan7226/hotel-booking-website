@@ -2,21 +2,24 @@ import React, { useState } from 'react';
 import { assets } from '../../assets/assets';
 
 const AddRoom = () => {
-  const [formData, setFormData] = useState({
-    roomTitle: '',
-    roomNumber: '',
-    roomType: 'single',
-    description: '',
-    price: '',
-    capacity: '1',
-    amenities: []
-  });
-
+  // ===== PART 1: FORM DATA STATE =====
+  const [roomTitle, setRoomTitle] = useState('');
+  const [roomNumber, setRoomNumber] = useState('');
+  const [roomType, setRoomType] = useState('single');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [capacity, setCapacity] = useState('1');
+  const [amenities, setAmenities] = useState([]);
+  
+  // ===== PART 2: IMAGE STATE =====
   const [uploadedImages, setUploadedImages] = useState([]);
+  
+  // ===== PART 3: ERROR & UI STATE =====
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState({ type: '', message: '' });
 
+  // ===== PART 4: OPTIONS DATA =====
   const roomTypes = [
     { value: 'single', label: 'Single Room' },
     { value: 'double', label: 'Double Room' },
@@ -38,137 +41,156 @@ const AddRoom = () => {
     { id: 'pool', label: 'Pool Access', icon: assets.poolIcon },
     { id: 'mountain', label: 'Mountain View', icon: assets.mountainIcon },
   ];
-/* 
-  // Show notification
+
+  // ===== HELPER: Show notification message =====
   const showNotification = (type, message) => {
     setNotification({ type, message });
     setTimeout(() => {
       setNotification({ type: '', message: '' });
     }, 3000);
-  }; */
-
-  // Validate form
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.roomTitle.trim()) {
-      newErrors.roomTitle = 'Room title is required';
-    }
-    if (!formData.roomNumber.trim()) {
-      newErrors.roomNumber = 'Room number is required';
-    }
-    if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
-    }
-    if (!formData.price || parseFloat(formData.price) <= 0) {
-      newErrors.price = 'Price must be greater than 0';
-    }
-    if (uploadedImages.length === 0) {
-      newErrors.images = 'Please upload at least one image';
-    }
-    if (formData.amenities.length === 0) {
-      newErrors.amenities = 'Please select at least one amenity';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Clear error for this field
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  // Handle amenities toggle
-  const handleAmenityToggle = (amenityId) => {
-    setFormData(prev => ({
-      ...prev,
-      amenities: prev.amenities.includes(amenityId)
-        ? prev.amenities.filter(id => id !== amenityId)
-        : [...prev.amenities, amenityId]
-    }));
-    if (errors.amenities) {
-      setErrors(prev => ({ ...prev, amenities: '' }));
-    }
-  };
-
+  // ===== HELPER: Upload image from file input =====
   const handleFileInput = (e) => {
-    const files = [...e.target.files];
-    if (uploadedImages.length + files.length > 4) {
+    const file = e.target.files[0]; // Get first file selected
+    
+    // Check if file exists
+    if (!file) return;
+    
+    // Check if maximum images reached
+    if (uploadedImages.length >= 4) {
       showNotification('error', 'Maximum 4 images allowed');
       return;
     }
-    processFiles(files);
+    
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      showNotification('error', 'Please upload an image file');
+      return;
+    }
+    
+    // Check file size (5MB = 5 * 1024 * 1024 bytes)
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification('error', 'Image size must be less than 5MB');
+      return;
+    }
+    
+    // Convert file to image and store it
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageData = {
+        id: Date.now(), // Simple unique ID
+        src: event.target.result // Base64 image data
+      };
+      setUploadedImages([...uploadedImages, imageData]);
+    };
+    reader.readAsDataURL(file);
   };
 
-  const processFiles = (files) => {
-    files.forEach(file => {
-      if (file.type.startsWith('image/')) {
-        if (file.size > 5 * 1024 * 1024) {
-          showNotification('error', 'Image size must be less than 5MB');
-          return;
-        }
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          setUploadedImages(prev => [...prev, {
-            id: Date.now() + Math.random(),
-            src: event.target.result
-          }]);
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-    if (errors.images) {
-      setErrors(prev => ({ ...prev, images: '' }));
+  // ===== HELPER: Remove image from list =====
+  const removeImage = (imageId) => {
+    const filteredImages = uploadedImages.filter(img => img.id !== imageId);
+    setUploadedImages(filteredImages);
+  };
+
+  // ===== HELPER: Toggle amenity on/off =====
+  const toggleAmenity = (amenityId) => {
+    // Check if amenity is already selected
+    if (amenities.includes(amenityId)) {
+      // If yes, remove it
+      const updatedAmenities = amenities.filter(id => id !== amenityId);
+      setAmenities(updatedAmenities);
+    } else {
+      // If no, add it
+      setAmenities([...amenities, amenityId]);
     }
   };
 
-  const removeImage = (imageId) => {
-    setUploadedImages(prev => prev.filter(img => img.id !== imageId));
+  // ===== HELPER: Validate all form fields =====
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Check room title
+    if (roomTitle.trim() === '') {
+      newErrors.roomTitle = 'Room title is required';
+    }
+    
+    // Check room number
+    if (roomNumber.trim() === '') {
+      newErrors.roomNumber = 'Room number is required';
+    }
+    
+    // Check description
+    if (description.trim() === '') {
+      newErrors.description = 'Description is required';
+    }
+    
+    // Check price
+    if (price === '' || parseFloat(price) <= 0) {
+      newErrors.price = 'Price must be greater than 0';
+    }
+    
+    // Check at least one image uploaded
+    if (uploadedImages.length === 0) {
+      newErrors.images = 'Please upload at least one image';
+    }
+    
+    // Check at least one amenity selected
+    if (amenities.length === 0) {
+      newErrors.amenities = 'Please select at least one amenity';
+    }
+    
+    setErrors(newErrors);
+    
+    // Return true if NO errors, false if there ARE errors
+    return Object.keys(newErrors).length === 0;
   };
 
+  // ===== MAIN: Handle form submission =====
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    // Step 1: Validate form
     if (!validateForm()) {
       showNotification('error', 'Please fix all errors');
       return;
     }
-
+    
+    // Step 2: Show loading state
     setIsSubmitting(true);
     
-    // Simulate API call
+    // Step 3: Prepare data to send
+    const roomData = {
+      roomTitle,
+      roomNumber,
+      roomType,
+      description,
+      price,
+      capacity,
+      amenities,
+      images: uploadedImages
+    };
+    
+    // Step 4: Simulate sending to backend (1.5 second delay)
     setTimeout(() => {
-      console.log('Room Data:', { ...formData, images: uploadedImages });
+      console.log('Room Data:', roomData);
       showNotification('success', 'Room added successfully!');
       
-      // Reset form
+      // Step 5: Clear form and reset state
       handleClear();
       setIsSubmitting(false);
     }, 1500);
   };
 
+  // ===== HELPER: Clear all form data =====
   const handleClear = () => {
-    setFormData({
-      roomTitle: '',
-      roomNumber: '',
-      roomType: 'single',
-      description: '',
-      price: '',
-      capacity: '1',
-      amenities: []
-    });
+    setRoomTitle('');
+    setRoomNumber('');
+    setRoomType('single');
+    setDescription('');
+    setPrice('');
+    setCapacity('1');
+    setAmenities([]);
     setUploadedImages([]);
     setErrors({});
   };
@@ -284,9 +306,8 @@ const AddRoom = () => {
                 </label>
                 <input
                   type='text'
-                  name='roomTitle'
-                  value={formData.roomTitle}
-                  onChange={handleInputChange}
+                  value={roomTitle}
+                  onChange={(e) => setRoomTitle(e.target.value)}
                   placeholder='e.g., Luxury Double Bedroom'
                   className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-1 transition ${
                     errors.roomTitle
@@ -307,9 +328,8 @@ const AddRoom = () => {
                   </label>
                   <input
                     type='text'
-                    name='roomNumber'
-                    value={formData.roomNumber}
-                    onChange={handleInputChange}
+                    value={roomNumber}
+                    onChange={(e) => setRoomNumber(e.target.value)}
                     placeholder='e.g., 101'
                     className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-1 transition ${
                       errors.roomNumber
@@ -327,9 +347,8 @@ const AddRoom = () => {
                     Room Type
                   </label>
                   <select
-                    name='roomType'
-                    value={formData.roomType}
-                    onChange={handleInputChange}
+                    value={roomType}
+                    onChange={(e) => setRoomType(e.target.value)}
                     className='w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition'
                   >
                     {roomTypes.map(type => (
@@ -347,9 +366,8 @@ const AddRoom = () => {
                   Description <span className='text-red-500'>*</span>
                 </label>
                 <textarea
-                  name='description'
-                  value={formData.description}
-                  onChange={handleInputChange}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   placeholder='Describe your room features and atmosphere...'
                   rows='4'
                   className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-1 transition resize-none ${
@@ -373,9 +391,8 @@ const AddRoom = () => {
                     <span className='absolute left-4 top-1/2 -translate-y-1/2 text-gray-600 font-semibold'>$</span>
                     <input
                       type='number'
-                      name='price'
-                      value={formData.price}
-                      onChange={handleInputChange}
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
                       placeholder='0.00'
                       min='0'
                       step='0.01'
@@ -396,9 +413,8 @@ const AddRoom = () => {
                     Guest Capacity
                   </label>
                   <select
-                    name='capacity'
-                    value={formData.capacity}
-                    onChange={handleInputChange}
+                    value={capacity}
+                    onChange={(e) => setCapacity(e.target.value)}
                     className='w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition'
                   >
                     {capacityOptions.map(option => (
@@ -423,8 +439,8 @@ const AddRoom = () => {
                 <label key={amenity.id} className='flex items-center gap-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 hover:border-blue-300 transition'>
                   <input
                     type='checkbox'
-                    checked={formData.amenities.includes(amenity.id)}
-                    onChange={() => handleAmenityToggle(amenity.id)}
+                    checked={amenities.includes(amenity.id)}
+                    onChange={() => toggleAmenity(amenity.id)}
                     className='w-5 h-5 text-blue-600 rounded cursor-pointer accent-blue-600'
                   />
                   <img src={amenity.icon} alt={amenity.label} className='w-5 h-5 opacity-70' />

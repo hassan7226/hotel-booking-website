@@ -1,16 +1,76 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 🏨 Hotel Booking Website (Frontend)
 
-Currently, two official plugins are available:
+A responsive **Hotel Booking Website UI** built using React and Tailwind CSS. This project focuses on frontend design and user experience for browsing hotels and viewing hotel details.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* 🏨 Modern hotel listing UI
+* 🔍 Search bar UI (frontend only)
+* 📱 Fully responsive design (mobile + desktop)
+* 🖼️ Clean and modern Tailwind CSS styling
+* 🧭 Multi-page layout using React Router (if used)
+* ⚡ Fast and lightweight frontend experience
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack
+
+* React.js
+* Tailwind CSS
+* JavaScript (ES6+)
+* React Router (if used)
+
+---
+
+## 📸 Screenshots
+
+*Add your project screenshots here*
+![alt text](<Screenshot (239).png>) ![alt text](<Screenshot (236).png>) ![alt text](<Screenshot (237).png>) ![alt text](<Screenshot (238).png>)
+
+```
+/screenshots/home.png
+/screenshots/hotel-details.png
+```
+
+---
+
+## 📂 Project Structure
+
+```
+hotel-booking-frontend/
+│── public/
+│── src/
+│   ├── components/
+│   ├── pages/
+│   ├── assets/
+│   ├── App.js
+│   ├── index.js
+│── package.json
+└── README.md
+```
+
+---
+
+## 🌐 Live Demo
+
+👉 [https://your-live-link.com](https://your-live-link.com)
+
+---
+
+## 📌 Note
+
+This project is **frontend only**. No backend or database is connected. All data is static/mock data used for UI demonstration purposes.
+
+---
+
+## 👨‍💻 Author
+
+* Name: Hassan Arshad
+* GitHub: [https://github.com/hassan7226]
+* Contact: [hassanarshad7226@gmail.com]
+---
+
+

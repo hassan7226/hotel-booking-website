@@ -115,20 +115,7 @@ const Navbar = () => {
           Contact
         </a>
 
-        {/* Mobile Login */}
         
-       {user && <button className="border px-4 py-1 text-sm font-light
-        rounded-full cursor-pointer transition-all" onClick={()=>navigate('/owner')}>
-          Dashboard</button>}
-
-        {!user && (
-          <button
-            onClick={openSignIn}
-            className="bg-black px-6 py-2 rounded-full text-white sm:hidden"
-          >
-            Login
-          </button>
-        )}
       </div>
 
       {/* Login menu */}

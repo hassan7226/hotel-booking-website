@@ -119,7 +119,7 @@ const Navbar = () => {
       </div>
 
       {/* Login menu */}
-      <div className={`login flex items-center gap-4 ${shouldAlwaysBeWhite || isScrolled ? "text-black" : "text-white"}`}>
+      <div className={`login flex items-center gap-4 ${shouldAlwaysBeWhite || isScrolled ? "text-white" : "text-white"}`}>
         <img
           src={assets.menuIcon}
           alt=""

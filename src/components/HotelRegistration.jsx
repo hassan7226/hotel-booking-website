@@ -1,10 +1,19 @@
 import React from "react";
 import assets, { cities } from "../assets/assets";
 
-const HotelRegistration = () => {
+const HotelRegistration = ({ isOpen, onClose, onRegister }) => {
+  if (!isOpen) {
+    return null;
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    onRegister?.();
+  };
+
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 bg-black/70 flex items-center justify-center z-100">
-      <form action="" className="flex bg-white rounded-xl overflow-hidden max-md:mx-2 max-w-4xl">
+      <form onSubmit={handleSubmit} className="flex bg-white rounded-xl overflow-hidden max-md:mx-2 max-w-4xl">
         <img
           src={assets.regImage}
           alt="Registration"
@@ -15,6 +24,7 @@ const HotelRegistration = () => {
             src={assets.closeIcon}
             alt=""
             className="absolute top-4 right-4 w-6 h-6 cursor-pointer"
+            onClick={onClose}
           />
           <p className="text-2xl font-bold mt-6">Register Your Hotel</p>
 
@@ -70,7 +80,7 @@ const HotelRegistration = () => {
               type="password"             
               className="w-full border border-gray-300 rounded px-3 py-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"             
             />  
-            <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-4 w-full">Register</button>        
+            <button type="submit" className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-4 w-full">Register</button>        
          </div>
         </div>
 

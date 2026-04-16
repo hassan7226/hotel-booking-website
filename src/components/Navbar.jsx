@@ -24,7 +24,7 @@ const BookIcon = () => (
   </svg>
 );
 
-const Navbar = () => {
+const Navbar = ({ isHotelRegistered, onListYourHotel }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -49,6 +49,11 @@ const Navbar = () => {
   // Check if current page has white background by default
   const isHotelPage = location.pathname.includes("/rooms") || location.pathname.includes("/rooms/");
   const shouldAlwaysBeWhite = isHotelPage;
+  const ctaClasses = `inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold transition ${
+    shouldAlwaysBeWhite || isScrolled
+      ? "bg-black text-white hover:bg-gray-800"
+      : "bg-white text-black hover:bg-gray-100"
+  }`;
 
   return (
     <div
@@ -115,11 +120,44 @@ const Navbar = () => {
           Contact
         </a>
 
+        {user && (
+          <button
+            type="button"
+            onClick={() => {
+              setSidebarOpen(false);
+              if (isHotelRegistered) {
+                navigate("/owner/dashboard");
+                return;
+              }
+              onListYourHotel?.();
+            }}
+            className="sm:hidden mt-4 inline-flex items-center rounded-full bg-black-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+          >
+            {isHotelRegistered ? "Dashboard" : "List Your Hotel"}
+          </button>
+        )}
+
         
       </div>
 
       {/* Login menu */}
       <div className={`login flex items-center gap-4 ${shouldAlwaysBeWhite || isScrolled ? "text-white" : "text-white"}`}>
+        {user && (
+          <button
+            type="button"
+            onClick={() => {
+              if (isHotelRegistered) {
+                navigate("/owner/dashboard");
+                return;
+              }
+              onListYourHotel?.();
+            }}
+            className={`hidden sm:inline-flex ${ctaClasses}`}
+          >
+            {isHotelRegistered ? "Dashboard" : "List Your Hotel"}
+          </button>
+        )}
+
         <img
           src={assets.menuIcon}
           alt=""
@@ -133,6 +171,12 @@ const Navbar = () => {
         {user ? (
           <UserButton>
             <UserButton.MenuItems>
+              {isHotelRegistered && (
+                <UserButton.Action
+                  label="Dashboard"
+                  onClick={() => navigate("/owner/dashboard")}
+                />
+              )}
               <UserButton.Action
                 label="My Bookings"
                 labelIcon={<BookIcon />}
